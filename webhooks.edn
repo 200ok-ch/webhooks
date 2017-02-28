@@ -1,0 +1,3 @@
+{:endpoints
+ [{:path "/gh/page-build"
+   :exec "/usr/bin/aplay /usr/share/games/wesnoth/1.10/sounds/slider.wav"}]}
