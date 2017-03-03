@@ -14,17 +14,21 @@
 (defn load-config []
   (read-string (slurp (:config (:options @options)))))
 
+(defn- sh* [cmd in]
+  (:out (apply sh (concat (split cmd #" ") [:in in]))))
+
 (defn handler [req]
   (let [config (load-config)
         endpoints (filter #(= (:path %) (:uri req)) (:endpoints config))]
     (if-not (empty? endpoints)
-      (do
-        ;; TODO dump payload in file pass file to sh
-        (doall (map #(apply sh (split (:exec %) #" ")) endpoints))
+      (let [out (map #(sh* (:exec %) (:body req)) endpoints)]
         {:status 200
          :headers {"Content-Type" "text/plain"}
-         :body "200 OK"})
+         :body (with-out-str
+                 (println "200 OK")
+                 (pprint out))})
       {:status 404
+       :headers {"Content-Type" "text/plain"}
        :body (with-out-str
                (println "404 Not found (unknown endpoint)")
                (pprint req)
@@ -61,4 +65,4 @@
 (comment
   (start-server)
   (stop-server)
-)
+  )
