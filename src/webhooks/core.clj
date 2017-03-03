@@ -15,7 +15,7 @@
   (read-string (slurp (:config (:options @options)))))
 
 (defn- sh* [cmd in]
-  (:out (apply sh (concat (split cmd #" ") [:in in]))))
+  (:out (sh "sh" "-c" cmd :in in)))
 
 (defn handler [req]
   (let [config (load-config)
