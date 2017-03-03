@@ -8,7 +8,7 @@
             [clojure.tools.cli :refer [parse-opts]]))
 
 (defonce options (atom {:options {:port 9000
-                                  :config "webhook.edn"
+                                  :config "./webhook.edn"
                                   :help false}}))
 
 (defn load-config []
@@ -48,7 +48,7 @@
     :parse-fn #(Integer/parseInt %)
     :validate [#(< 0 % 0x10000) "Must be a number between 0 and 65536"]]
    ["-c" "--config" "Config file"
-    :default "webhooks.edn"]
+    :default "./webhooks.edn"]
    ["-h" "--help"]])
 
 (defn -main [& args]
