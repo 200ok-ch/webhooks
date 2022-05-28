@@ -22,17 +22,20 @@
         endpoints (filter #(= (:path %) (:uri req)) (:endpoints config))]
     (if-not (empty? endpoints)
       (let [out (map #(sh* (:exec %) (:body req)) endpoints)]
+        (println "webhook request (200):" (:uri req))
         {:status 200
          :headers {"Content-Type" "text/plain"}
          :body (with-out-str
                  (println "200 OK")
                  (pprint out))})
-      {:status 404
-       :headers {"Content-Type" "text/plain"}
-       :body (with-out-str
-               (println "404 Not found (unknown endpoint)")
-               (pprint req)
-               (pprint @options))})))
+      (do
+        (println "webhook request (404):" (:uri req))
+        {:status 404
+         :headers {"Content-Type" "text/plain"}
+         :body (with-out-str
+                 (println "404 Not found (unknown endpoint)")
+                 (pprint req)
+                 (pprint @options))}))))
 
 (defonce server (atom nil))
 
